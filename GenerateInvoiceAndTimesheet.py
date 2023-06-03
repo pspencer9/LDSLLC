@@ -14,20 +14,20 @@ import sys
 ##OUTPUT HOURS TO EXCEL
 ###################
 
-def main(argv):  ##argv is a debug parameter
+def main(argv):  
     debug = 1
-    if sys.argv[1] == '1':
+    if sys.argv[1] == '1':                      ##argv[1] is a debug parameter
         debug = True
         print('Debug Mode')
     elif sys.argv[1] == '0':
         debug = False
            
-    start_date = sys.argv[2]
-    end_date = sys.argv[3]
+    start_date = sys.argv[2]                    ##argv[2] is the start date
+    end_date = sys.argv[3]                      ##argv[3] is the end date
         
     GenInvoiceOrTimesheet = 'Invoice'
     if len(sys.argv) == 5:
-        GenInvoiceOrTimesheet = sys.argv[4]
+        GenInvoiceOrTimesheet = sys.argv[4]     ##argv[4] is a invoice vs timesheet parameter
         
         
     ##Variable Declaration
@@ -101,26 +101,34 @@ def main(argv):  ##argv is a debug parameter
                 jira_log_month.append(start_date_date.strftime("%d %b, %Y") + ' - ' + end_date_date.strftime("%d %b, %Y"))
                 jira_log_hours.append(timeSpentInHours)
                 
-                
-    d = {'Time Frame': jira_log_month, 'Hours': jira_log_hours}
-    df = pd.DataFrame(data = d)
-    df2 = df.groupby('Time Frame').sum('Hours').reset_index()
-    df2['Total'] = df2.Hours * hourly_rate
-    df2['Hours']=df2["Hours"].map(str) ##convert to string so that the next step doesn't act up
-    df2['Description'] = 'BI Consulting Services (@ ' + hourly_rate_str + '/hour)'
-    
-    df2 = df2.iloc[:,[0,3,1,2]] ##reorder columns
+         
+    if GenInvoiceOrTimesheet == 'Invoice':
+        d = {'Time Frame': jira_log_month, 'Hours': jira_log_hours}
+        df = pd.DataFrame(data = d)
+        df2 = df.groupby('Time Frame').sum('Hours').reset_index()
+        df2['Total'] = df2.Hours * hourly_rate
+        df2['Hours']=df2["Hours"].map(str) ##convert to string so that the next step doesn't act up
+        df2['Description'] = 'BI Consulting Services (@ ' + hourly_rate_str + '/hour)'
+        
+        df2 = df2.iloc[:,[0,3,1,2]] ##reorder columns
+    else:
+        d = {'Date': jira_log_date, 'Hours': jira_log_hours}
+        df = pd.DataFrame(data = d)
+        df2 = df.groupby('Date').sum('Hours').reset_index()
+        df2['Hours']=df2["Hours"].map(str) ##convert to string so that the next step doesn't act up
+        df2['Description'] = 'BI Consulting Services'
+        df2 = df2.iloc[:,[0,2,1]] ##reorder columns
             
     ##log the day of the successful load
     if not debug:        
         ##save off the timesheet
         if GenInvoiceOrTimesheet != 'Invoice':
-            1
+            df2.sort_values('Date').to_excel('timesheet.xlsx')
+            print('Timesheet generated')
         else:
             df2.to_excel('invoice.xlsx')
-   
-   
-    print('Done')
+            print('Invoice generated')
+ 
         
 if __name__ == "__main__":
    main(sys.argv[1:])
