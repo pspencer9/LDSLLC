@@ -57,6 +57,7 @@ def main(argv):  ##argv is a debug parameter
     jira_log_label = []
     jira_log_date = []
     jira_log_week = []
+    jira_log_month = []
     jira_log_week_start = []
     jira_log_hours = []
     
@@ -97,20 +98,18 @@ def main(argv):  ##argv is a debug parameter
                 jira_log_date.append(update_date_str)
                 jira_log_week.append(update_date_week_start.strftime("%d %b, %Y") + ' - '+ update_date_week_end.strftime("%d %b, %Y"))
                 jira_log_week_start.append(update_date_week_start)
+                jira_log_month.append(start_date_date.strftime("%d %b, %Y") + ' - ' + end_date_date.strftime("%d %b, %Y"))
                 jira_log_hours.append(timeSpentInHours)
                 
                 
-    d = {'Week': jira_log_week, 'Hours': jira_log_hours, 'WeekStart': jira_log_week_start }
+    d = {'Time Frame': jira_log_month, 'Hours': jira_log_hours}
     df = pd.DataFrame(data = d)
-    df2 = df.groupby(['Week','WeekStart']).sum('Hours').reset_index()
+    df2 = df.groupby('Time Frame').sum('Hours').reset_index()
     df2['Total'] = df2.Hours * hourly_rate
     df2['Hours']=df2["Hours"].map(str) ##convert to string so that the next step doesn't act up
-    df2['Description'] = 'BI Consulting Services (' + df2.Hours + ' hours @ ' + hourly_rate_str + '/hour'
+    df2['Description'] = 'BI Consulting Services (@ ' + hourly_rate_str + '/hour)'
     
-    df2 = df2.iloc[:,[0,4,2,3,1]] ##reorder columns
-    df2 = df2.sort_values('WeekStart') ##sort columns    
-    df2.drop(df2.columns[4], axis = 1,inplace=True) ##delete WeekStart column as it's not
-           
+    df2 = df2.iloc[:,[0,3,1,2]] ##reorder columns
             
     ##log the day of the successful load
     if not debug:        
