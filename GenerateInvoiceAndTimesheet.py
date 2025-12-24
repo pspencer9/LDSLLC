@@ -35,8 +35,8 @@ def main(argv):
     end_date = argv[2]
     GenInvoiceOrTimesheet = argv[3] if len(argv) == 4 else "Invoice"
 
-    hourly_rate = 135
-    hourly_rate_str = "$135"
+    hourly_rate = 145
+    hourly_rate_str = "$145"
 
     start_date_date = datetime.strptime(start_date, "%m/%d/%y")
     end_date_date = datetime.strptime(end_date, "%m/%d/%y")
