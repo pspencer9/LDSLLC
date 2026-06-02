@@ -1,0 +1,6 @@
+JIRA_API_KEY = "YOUR_JIRA_API_KEY"
+JIRA_USERNAME = "your.email@domain.com"
+BILLING_NAME = "Your Name"
+BILLING_TASK = "Your Billing Task"
+INVOICE_ABREVIATION = "ABC"
+HOURLY_RATE = 145
