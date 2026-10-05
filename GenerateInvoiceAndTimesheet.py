@@ -200,7 +200,7 @@ def main(argv):
             for i, row_data in enumerate(df3.itertuples(index=False), start=14):
                 timesheet_ws[f'B{i}'] = row_data[0]  # Date
                 timesheet_ws[f'C{i}'] = row_data[1]  # Description
-                timesheet_ws[f'D{i}'] = row_data[2]  # Hours
+                timesheet_ws[f'D{i}'] = float(row_data[2])  # Hours, make sure this is numeric for Excel to sum correctly
 
             num_deleted_rows = 0
             # Shorten table starting from 42 going upwards, deleting rows that are empty until we hit a row with data, then stop
